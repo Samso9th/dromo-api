@@ -33,6 +33,7 @@ const schema = z.object({
   DUBU_API_BASE: z.string().optional(),
   DUBU_API_KEY: z.string().optional(),
   DUBU_WEBHOOK_SECRET: z.string().optional(),
+  DUBU_CHECKOUT_URL: z.string().optional(),
 });
 
 const parsed = schema.safeParse(process.env);

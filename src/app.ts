@@ -4,6 +4,7 @@ import cors from "cors";
 import helmet from "helmet";
 import { env } from "@/config/env";
 import { router } from "@/routes";
+import { webhooksRouter } from "@/modules/webhooks/routes";
 import { configurePassport } from "@/config/passport";
 import { errorHandler, notFoundHandler } from "@/middleware/error";
 
@@ -19,8 +20,9 @@ export function createApp() {
     }),
   );
 
-  // NOTE: Stripe/Dubu webhook routes need the RAW body for signature verification —
-  // they'll be mounted with express.raw() BEFORE this json parser when added.
+  // Webhooks need the RAW body for signature verification — mount BEFORE the json parser.
+  app.use("/api/v1/webhooks", express.raw({ type: "*/*" }), webhooksRouter);
+
   app.use(express.json({ limit: "1mb" }));
   app.use(cookieParser());
   app.use(configurePassport().initialize()); // OAuth strategies (session: false)

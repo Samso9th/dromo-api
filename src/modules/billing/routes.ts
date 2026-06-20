@@ -1,11 +1,21 @@
 import { Router } from "express";
+import { z } from "zod";
 import { requireAuth } from "@/middleware/require-auth";
+import { validate } from "@/middleware/validate";
 import { asyncHandler } from "@/utils/app-error";
 import { reqUser } from "@/utils/req-user";
 import { getBalance } from "@/services/credits.service";
+import { createCheckout } from "@/services/payments.service";
 import { CreditTransaction } from "@/models";
 
 export const billingRouter = Router();
+
+const checkoutSchema = z.object({
+  kind: z.enum(["subscription", "topup"]),
+  method: z.enum(["stripe", "dubu"]),
+  planId: z.enum(["free", "pro", "premium"]).optional(),
+  credits: z.number().int().positive().optional(),
+});
 
 // GET /billing/balance
 billingRouter.get(
@@ -39,4 +49,13 @@ billingRouter.get(
   }),
 );
 
-// POST /billing/checkout (Stripe / Dubu) is added with the payments module.
+// POST /billing/checkout → { url } (Stripe card or Dubu Pay)
+billingRouter.post(
+  "/checkout",
+  requireAuth,
+  validate({ body: checkoutSchema }),
+  asyncHandler(async (req, res) => {
+    const result = await createCheckout(reqUser(req), req.body);
+    res.json(result);
+  }),
+);

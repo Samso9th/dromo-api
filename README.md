@@ -20,8 +20,15 @@ AI resume-tailoring backend. Express + Sequelize + Postgres + Redis. Full design
 - ✅ **Resume upload + parse**: `POST /resume/master` (multer) → text extraction (pdf-parse / mammoth)
   → AI parse to master JSON (charged via the credit engine) → optional Cloudinary storage → persist.
   Verified on a real 4-page PDF (name, 22 skills, 8 roles, 6 projects, 4 education, 3 certs).
-- ⏳ Next: billing checkout + Stripe/Dubu webhooks, files (Puppeteer PDF / DOCX), then wire the
-  frontend to the live API (`credentials:'include'`, drop the localStorage token).
+- ✅ **Frontend wired to the live API** (cookie sessions, `credentials:'include'`).
+- ✅ **Billing checkout + webhooks**: `POST /billing/checkout` (Stripe card / Dubu Pay), raw-body
+  signature-verified `POST /webhooks/stripe` + `/webhooks/dubu`, and an idempotent `grantForPayment`
+  (subscription → plan + monthly credits; top-up → credits; cancel → downgrade, keep credits). Needs
+  `STRIPE_SECRET_KEY` / `DUBU_API_*` to go live (graceful 503 otherwise).
+- ✅ **Files (Puppeteer)**: `GET /files/:kind/:sessionId?format=` — template-aware server-rendered PDF +
+  DOCX/TXT/MD for resume / cover-letter / interview-brief. Verified (valid PDF/DOCX bytes).
+- ⏳ Optional: point the frontend download buttons at `/files` (currently client-side export, which
+  also works); scheduled jobs (pricing refresh cron, subscription renewal safety net).
 
 ## Setup
 ```bash

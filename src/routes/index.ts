@@ -6,6 +6,7 @@ import { modelsRouter } from "@/modules/models/routes";
 import { billingRouter } from "@/modules/billing/routes";
 import { resumeRouter } from "@/modules/resume/routes";
 import { sessionsRouter } from "@/modules/sessions/routes";
+import { filesRouter } from "@/modules/files/routes";
 
 export const router = Router();
 
@@ -14,6 +15,7 @@ router.use("/models", modelsRouter);
 router.use("/billing", billingRouter);
 router.use("/resume", resumeRouter);
 router.use("/sessions", sessionsRouter);
+router.use("/files", filesRouter);
 
 router.get("/health", (_req, res) => {
   res.json({ status: "ok", service: "dromo-api", time: new Date().toISOString() });
