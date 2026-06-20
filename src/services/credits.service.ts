@@ -23,7 +23,10 @@ export async function applyCredits(
   opts: GrantOpts,
   t: Transaction,
 ): Promise<number> {
-  const user = await User.findByPk(userId, { transaction: t, lock: t.LOCK.UPDATE });
+  const user = await User.findByPk(userId, {
+    transaction: t,
+    lock: t.LOCK.UPDATE,
+  });
   if (!user) throw notFound("User not found");
 
   const balanceAfter = Math.max(0, user.credits + amount);
@@ -46,7 +49,9 @@ export async function applyCredits(
   return balanceAfter;
 }
 
-export async function getBalance(userId: string): Promise<{ balance: number; plan: Plan }> {
+export async function getBalance(
+  userId: string,
+): Promise<{ balance: number; plan: Plan }> {
   const user = await User.findByPk(userId);
   if (!user) throw notFound("User not found");
   return { balance: user.credits, plan: user.plan };

@@ -24,9 +24,36 @@ export interface TemplateConfig {
 }
 
 export const RESUME_TEMPLATES: TemplateConfig[] = [
-  { id: "classic", minPlan: "free", font: "serif", nameAlign: "center", nameSize: 30, heading: "caps-rule", density: "normal", columns: 1 },
-  { id: "modern", minPlan: "free", font: "sans", nameAlign: "left", nameSize: 27, heading: "plain-bold", density: "normal", columns: 1 },
-  { id: "compact", minPlan: "free", font: "serif", nameAlign: "center", nameSize: 24, heading: "caps-rule", density: "compact", columns: 1 },
+  {
+    id: "classic",
+    minPlan: "free",
+    font: "serif",
+    nameAlign: "center",
+    nameSize: 30,
+    heading: "caps-rule",
+    density: "normal",
+    columns: 1,
+  },
+  {
+    id: "modern",
+    minPlan: "free",
+    font: "sans",
+    nameAlign: "left",
+    nameSize: 27,
+    heading: "plain-bold",
+    density: "normal",
+    columns: 1,
+  },
+  {
+    id: "compact",
+    minPlan: "free",
+    font: "serif",
+    nameAlign: "center",
+    nameSize: 24,
+    heading: "caps-rule",
+    density: "compact",
+    columns: 1,
+  },
   {
     id: "two-column",
     minPlan: "pro",
@@ -38,10 +65,23 @@ export const RESUME_TEMPLATES: TemplateConfig[] = [
     columns: 2,
     sidebar: ["skills", "education", "certifications"],
   },
-  { id: "editorial", minPlan: "premium", font: "serif", nameAlign: "center", nameSize: 34, nameUppercase: true, heading: "caps-rule", density: "airy", columns: 1 },
+  {
+    id: "editorial",
+    minPlan: "premium",
+    font: "serif",
+    nameAlign: "center",
+    nameSize: 34,
+    nameUppercase: true,
+    heading: "caps-rule",
+    density: "airy",
+    columns: 1,
+  },
 ];
 
-export const TEMPLATES = RESUME_TEMPLATES.map((t) => ({ id: t.id, minPlan: t.minPlan }));
+export const TEMPLATES = RESUME_TEMPLATES.map((t) => ({
+  id: t.id,
+  minPlan: t.minPlan,
+}));
 export const DEFAULT_TEMPLATE_ID = "classic";
 export const DEFAULT_MODEL_ID = "qwen/qwen3-235b-a22b-2507";
 

@@ -2,7 +2,9 @@ import "dotenv/config";
 import { z } from "zod";
 
 const schema = z.object({
-  NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
   PORT: z.coerce.number().default(4000),
   APP_URL: z.string().url().default("http://localhost:8080"),
   API_URL: z.string().url().default("http://localhost:4000"),
@@ -38,7 +40,6 @@ const schema = z.object({
 
 const parsed = schema.safeParse(process.env);
 if (!parsed.success) {
-  // eslint-disable-next-line no-console
   console.error("❌ Invalid environment:", parsed.error.flatten().fieldErrors);
   process.exit(1);
 }

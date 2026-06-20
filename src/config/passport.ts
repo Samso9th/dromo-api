@@ -9,13 +9,17 @@ import type { OAuthProvider } from "@/types";
 
 export const configuredProviders = new Set<OAuthProvider>();
 
-const callbackUrl = (p: OAuthProvider) => `${env.API_URL}/api/v1/auth/oauth/${p}/callback`;
+const callbackUrl = (p: OAuthProvider) =>
+  `${env.API_URL}/api/v1/auth/oauth/${p}/callback`;
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const firstEmail = (p: any): string | null => p?.emails?.[0]?.value ?? null;
 const firstPhoto = (p: any): string | null => p?.photos?.[0]?.value ?? null;
 
-async function handle(provider: OAuthProvider, profile: any, done: any): Promise<void> {
+async function handle(
+  provider: OAuthProvider,
+  profile: any,
+  done: any,
+): Promise<void> {
   try {
     const user = await upsertOAuthUser({
       provider,
@@ -29,7 +33,6 @@ async function handle(provider: OAuthProvider, profile: any, done: any): Promise
     done(err);
   }
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export function configurePassport(): typeof passport {
   if (env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET) {
@@ -54,7 +57,8 @@ export function configurePassport(): typeof passport {
           clientSecret: env.GITHUB_CLIENT_SECRET,
           callbackURL: callbackUrl("github"),
         },
-        (_a: string, _r: string, profile: any, done: any) => handle("github", profile, done),
+        (_a: string, _r: string, profile: any, done: any) =>
+          handle("github", profile, done),
       ),
     );
     configuredProviders.add("github");
@@ -77,9 +81,13 @@ export function configurePassport(): typeof passport {
   }
 
   if (configuredProviders.size) {
-    logger.info(`OAuth providers configured: ${[...configuredProviders].join(", ")}`);
+    logger.info(
+      `OAuth providers configured: ${[...configuredProviders].join(", ")}`,
+    );
   } else {
-    logger.warn("No OAuth providers configured (set *_CLIENT_ID / *_CLIENT_SECRET)");
+    logger.warn(
+      "No OAuth providers configured (set *_CLIENT_ID / *_CLIENT_SECRET)",
+    );
   }
   return passport;
 }

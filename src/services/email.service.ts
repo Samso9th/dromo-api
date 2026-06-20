@@ -3,7 +3,11 @@ import { logger } from "@/config/logger";
 
 const FROM = "Dromo <noreply@dromo.app>";
 
-async function sendEmail(to: string, subject: string, html: string): Promise<void> {
+async function sendEmail(
+  to: string,
+  subject: string,
+  html: string,
+): Promise<void> {
   if (!env.RESEND_API_KEY) {
     logger.info(`[email:dev] would send to=${to} subject="${subject}"`);
     return;

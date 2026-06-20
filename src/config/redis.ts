@@ -13,7 +13,9 @@ export const redis = new Redis(env.REDIS_URL, {
 let redisErrorLogged = false;
 redis.on("error", (err) => {
   if (!redisErrorLogged) {
-    logger.warn(`Redis unavailable (${err.message}) — magic-links disabled until it reconnects`);
+    logger.warn(
+      `Redis unavailable (${err.message}) — magic-links disabled until it reconnects`,
+    );
     redisErrorLogged = true;
   }
 });

@@ -18,7 +18,11 @@ router.use("/sessions", sessionsRouter);
 router.use("/files", filesRouter);
 
 router.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "dromo-api", time: new Date().toISOString() });
+  res.json({
+    status: "ok",
+    service: "dromo-api",
+    time: new Date().toISOString(),
+  });
 });
 
 router.get(

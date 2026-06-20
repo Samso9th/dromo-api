@@ -1,7 +1,10 @@
 import type { Plan } from "@/types";
 
 /** Paid plans (mirrors ui/src/lib/billing.ts + docs/monetization.md). */
-export const PLAN_CONFIG: Record<"pro" | "premium", { priceUsd: number; credits: number; label: string }> = {
+export const PLAN_CONFIG: Record<
+  "pro" | "premium",
+  { priceUsd: number; credits: number; label: string }
+> = {
   pro: { priceUsd: 9.99, credits: 1500, label: "Dromo Pro (monthly)" },
   premium: { priceUsd: 29.99, credits: 5000, label: "Dromo Premium (monthly)" },
 };
@@ -25,7 +28,9 @@ export function resolveCheckout(input: {
 }): { amountUsd: number; credits: number; label: string } {
   if (input.kind === "subscription") {
     if (!input.planId || !isPaidPlan(input.planId)) {
-      throw new Error("A valid plan (pro|premium) is required for a subscription");
+      throw new Error(
+        "A valid plan (pro|premium) is required for a subscription",
+      );
     }
     const cfg = PLAN_CONFIG[input.planId];
     return { amountUsd: cfg.priceUsd, credits: cfg.credits, label: cfg.label };

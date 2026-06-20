@@ -29,7 +29,10 @@ export async function chargeAndRun<T>(params: {
   sessionId: string | null;
   action: GenAction;
   model: ModelPricing;
-  run: () => Promise<{ result: T; usage: { promptTokens: number; completionTokens: number } }>;
+  run: () => Promise<{
+    result: T;
+    usage: { promptTokens: number; completionTokens: number };
+  }>;
 }): Promise<ChargeResult<T>> {
   const { userId, sessionId, action, model, run } = params;
 
@@ -45,7 +48,8 @@ export async function chargeAndRun<T>(params: {
   // 2. Run the AI call → actual token usage.
   const { result, usage } = await run();
   const rawUsd =
-    Number(model.inputPrice) * usage.promptTokens + Number(model.outputPrice) * usage.completionTokens;
+    Number(model.inputPrice) * usage.promptTokens +
+    Number(model.outputPrice) * usage.completionTokens;
   const creditsCharged = creditsForRaw(rawUsd, action);
 
   // 3. Record usage + charge, atomically.
@@ -77,5 +81,10 @@ export async function chargeAndRun<T>(params: {
     return { usageEventId: event.id, balance: newBalance };
   });
 
-  return { result, creditsCharged, balance: out.balance, usageEventId: out.usageEventId };
+  return {
+    result,
+    creditsCharged,
+    balance: out.balance,
+    usageEventId: out.usageEventId,
+  };
 }

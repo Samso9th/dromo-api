@@ -13,9 +13,19 @@ const base: CookieOptions = {
   path: "/",
 };
 
-export function setAuthCookies(res: Response, accessToken: string, refreshToken: string): void {
-  res.cookie(ACCESS_COOKIE, accessToken, { ...base, maxAge: ACCESS_TTL_S * 1000 });
-  res.cookie(REFRESH_COOKIE, refreshToken, { ...base, maxAge: REFRESH_TTL_S * 1000 });
+export function setAuthCookies(
+  res: Response,
+  accessToken: string,
+  refreshToken: string,
+): void {
+  res.cookie(ACCESS_COOKIE, accessToken, {
+    ...base,
+    maxAge: ACCESS_TTL_S * 1000,
+  });
+  res.cookie(REFRESH_COOKIE, refreshToken, {
+    ...base,
+    maxAge: REFRESH_TTL_S * 1000,
+  });
 }
 
 export function clearAuthCookies(res: Response): void {

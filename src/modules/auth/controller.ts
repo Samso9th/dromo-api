@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request } from "express";
 import { asyncHandler, badRequest } from "@/utils/app-error";
 import { REFRESH_COOKIE } from "@/utils/cookies";
 import * as authService from "@/services/auth.service";
@@ -21,7 +21,11 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const refresh = asyncHandler(async (req, res) => {
-  const user = await authService.refresh(req.cookies?.[REFRESH_COOKIE], res, meta(req));
+  const user = await authService.refresh(
+    req.cookies?.[REFRESH_COOKIE],
+    res,
+    meta(req),
+  );
   res.json({ user });
 });
 

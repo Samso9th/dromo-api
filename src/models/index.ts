@@ -4,7 +4,12 @@ import { OAuthAccount } from "./oauth-account";
 import { RefreshToken } from "./refresh-token";
 import { MasterResume } from "./master-resume";
 import { GenerationSession } from "./generation-session";
-import { TailoredResume, CoverLetter, ChatMessage, InterviewBrief } from "./artifacts";
+import {
+  TailoredResume,
+  CoverLetter,
+  ChatMessage,
+  InterviewBrief,
+} from "./artifacts";
 import { ModelPricing } from "./model-pricing";
 import { UsageEvent } from "./usage-event";
 import { CreditTransaction } from "./credit-transaction";
@@ -39,16 +44,32 @@ User.hasMany(Payment, { foreignKey: "userId", onDelete: "CASCADE" });
 Payment.belongsTo(User, { foreignKey: "userId" });
 
 // Session 1:1 / 1:N artifacts
-GenerationSession.hasOne(TailoredResume, { foreignKey: "sessionId", onDelete: "CASCADE", as: "tailoredResume" });
+GenerationSession.hasOne(TailoredResume, {
+  foreignKey: "sessionId",
+  onDelete: "CASCADE",
+  as: "tailoredResume",
+});
 TailoredResume.belongsTo(GenerationSession, { foreignKey: "sessionId" });
 
-GenerationSession.hasOne(CoverLetter, { foreignKey: "sessionId", onDelete: "CASCADE", as: "coverLetter" });
+GenerationSession.hasOne(CoverLetter, {
+  foreignKey: "sessionId",
+  onDelete: "CASCADE",
+  as: "coverLetter",
+});
 CoverLetter.belongsTo(GenerationSession, { foreignKey: "sessionId" });
 
-GenerationSession.hasMany(ChatMessage, { foreignKey: "sessionId", onDelete: "CASCADE", as: "chat" });
+GenerationSession.hasMany(ChatMessage, {
+  foreignKey: "sessionId",
+  onDelete: "CASCADE",
+  as: "chat",
+});
 ChatMessage.belongsTo(GenerationSession, { foreignKey: "sessionId" });
 
-GenerationSession.hasOne(InterviewBrief, { foreignKey: "sessionId", onDelete: "CASCADE", as: "interviewBrief" });
+GenerationSession.hasOne(InterviewBrief, {
+  foreignKey: "sessionId",
+  onDelete: "CASCADE",
+  as: "interviewBrief",
+});
 InterviewBrief.belongsTo(GenerationSession, { foreignKey: "sessionId" });
 
 GenerationSession.hasMany(UsageEvent, { foreignKey: "sessionId" });

@@ -25,7 +25,11 @@ export async function chatCompletion(opts: {
   maxTokens?: number;
 }): Promise<ChatResult> {
   if (!env.OPENROUTER_API_KEY) {
-    throw new AppError(503, "ai_unavailable", "OPENROUTER_API_KEY is not configured");
+    throw new AppError(
+      503,
+      "ai_unavailable",
+      "OPENROUTER_API_KEY is not configured",
+    );
   }
   const res = await fetch(`${BASE}/chat/completions`, {
     method: "POST",
@@ -44,7 +48,11 @@ export async function chatCompletion(opts: {
     }),
   });
   if (!res.ok) {
-    throw new AppError(502, "ai_error", `OpenRouter ${res.status}: ${await res.text()}`);
+    throw new AppError(
+      502,
+      "ai_error",
+      `OpenRouter ${res.status}: ${await res.text()}`,
+    );
   }
   const data = (await res.json()) as {
     choices?: Array<{ message?: { content?: string } }>;
@@ -68,9 +76,12 @@ export interface ORModel {
 /** Fetch the model catalog (public; pricing in $/token as strings). */
 export async function fetchModels(): Promise<ORModel[]> {
   const res = await fetch(`${BASE}/models`, {
-    headers: env.OPENROUTER_API_KEY ? { Authorization: `Bearer ${env.OPENROUTER_API_KEY}` } : {},
+    headers: env.OPENROUTER_API_KEY
+      ? { Authorization: `Bearer ${env.OPENROUTER_API_KEY}` }
+      : {},
   });
-  if (!res.ok) throw new AppError(502, "ai_error", `OpenRouter /models ${res.status}`);
+  if (!res.ok)
+    throw new AppError(502, "ai_error", `OpenRouter /models ${res.status}`);
   const data = (await res.json()) as { data?: ORModel[] };
   return data.data ?? [];
 }

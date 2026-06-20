@@ -7,7 +7,11 @@ import type { Plan } from "@/types";
 
 const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, premium: 2 };
 
-export async function requireAuth(req: Request, _res: Response, next: NextFunction): Promise<void> {
+export async function requireAuth(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+): Promise<void> {
   try {
     const token = req.cookies?.[ACCESS_COOKIE];
     if (!token) throw unauthorized();

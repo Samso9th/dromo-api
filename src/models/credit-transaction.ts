@@ -27,7 +27,11 @@ export class CreditTransaction extends Model<
 
 CreditTransaction.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     kind: {
       type: DataTypes.ENUM("grant", "spend", "topup", "refund", "adjustment"),
@@ -37,7 +41,13 @@ CreditTransaction.init(
     balanceAfter: { type: DataTypes.INTEGER, allowNull: false },
     description: { type: DataTypes.STRING, allowNull: false },
     refType: {
-      type: DataTypes.ENUM("usage", "payment", "subscription", "signup", "manual"),
+      type: DataTypes.ENUM(
+        "usage",
+        "payment",
+        "subscription",
+        "signup",
+        "manual",
+      ),
       allowNull: true,
     },
     refId: { type: DataTypes.UUID, allowNull: true },

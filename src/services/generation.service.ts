@@ -10,8 +10,17 @@ import {
 import { chatCompletion } from "./openrouter";
 import { chargeAndRun } from "./credit-engine";
 import { getModelOrThrow } from "./pricing";
-import { assertModelAllowed, assertQaAvailable, assertRetryAvailable } from "./limits.service";
-import { briefMessages, coverMessages, qaMessages, tailorMessages } from "@/prompts";
+import {
+  assertModelAllowed,
+  assertQaAvailable,
+  assertRetryAvailable,
+} from "./limits.service";
+import {
+  briefMessages,
+  coverMessages,
+  qaMessages,
+  tailorMessages,
+} from "@/prompts";
 import { coverLetterSchema, tailoredResumeSchema } from "@/validators/resume";
 import { AppError, badRequest } from "@/utils/app-error";
 import type {
@@ -32,7 +41,11 @@ function parseJson(content: string): unknown {
   try {
     return JSON.parse(cleaned);
   } catch {
-    throw new AppError(502, "ai_bad_output", "The model returned malformed output. Try again.");
+    throw new AppError(
+      502,
+      "ai_bad_output",
+      "The model returned malformed output. Try again.",
+    );
   }
 }
 
@@ -44,18 +57,24 @@ async function getMaster(userId: string): Promise<MasterResume> {
 
 async function getTailored(sessionId: string): Promise<TailoredResume> {
   const tailored = await TailoredResume.findOne({ where: { sessionId } });
-  if (!tailored) throw badRequest("Generate the tailored resume for this session first.");
+  if (!tailored)
+    throw badRequest("Generate the tailored resume for this session first.");
   return tailored;
 }
 
 const plan = (user: User) => user.plan as Plan;
 
 /* ── Tailor ── */
-export async function runTailor(session: GenerationSession, user: User): Promise<TailoredResumeData> {
+export async function runTailor(
+  session: GenerationSession,
+  user: User,
+): Promise<TailoredResumeData> {
   const master = await getMaster(user.id);
   const model = await getModelOrThrow(session.modelId);
   assertModelAllowed(model.tier, plan(user), model.name);
-  const existing = await TailoredResume.findOne({ where: { sessionId: session.id } });
+  const existing = await TailoredResume.findOne({
+    where: { sessionId: session.id },
+  });
   if (existing) assertRetryAvailable(session.retries.tailor, plan(user));
 
   const out = await chargeAndRun({
@@ -78,7 +97,10 @@ export async function runTailor(session: GenerationSession, user: User): Promise
   if (existing) {
     existing.data = out.result;
     await existing.save();
-    session.retries = { ...session.retries, tailor: session.retries.tailor + 1 };
+    session.retries = {
+      ...session.retries,
+      tailor: session.retries.tailor + 1,
+    };
     await session.save();
   } else {
     await TailoredResume.create({ sessionId: session.id, data: out.result });
@@ -87,11 +109,17 @@ export async function runTailor(session: GenerationSession, user: User): Promise
 }
 
 /* ── Cover letter ── */
-export async function runCover(session: GenerationSession, user: User, tone: string) {
+export async function runCover(
+  session: GenerationSession,
+  user: User,
+  tone: string,
+) {
   const tailored = await getTailored(session.id);
   const model = await getModelOrThrow(session.modelId);
   assertModelAllowed(model.tier, plan(user), model.name);
-  const existing = await CoverLetter.findOne({ where: { sessionId: session.id } });
+  const existing = await CoverLetter.findOne({
+    where: { sessionId: session.id },
+  });
   if (existing) assertRetryAvailable(session.retries.cover, plan(user));
 
   const out = await chargeAndRun({
@@ -102,7 +130,11 @@ export async function runCover(session: GenerationSession, user: User, tone: str
     run: async () => {
       const { content, usage } = await chatCompletion({
         model: model.id,
-        messages: coverMessages(tailored.data as TailoredResumeData, session.jobDescription, tone),
+        messages: coverMessages(
+          tailored.data as TailoredResumeData,
+          session.jobDescription,
+          tone,
+        ),
         json: true,
         maxTokens: 1500,
       });
@@ -123,7 +155,11 @@ export async function runCover(session: GenerationSession, user: User, tone: str
 }
 
 /* ── Q&A ── */
-export async function runChat(session: GenerationSession, user: User, question: string) {
+export async function runChat(
+  session: GenerationSession,
+  user: User,
+  question: string,
+) {
   await assertQaAvailable(session.id, plan(user));
   const tailored = await getTailored(session.id);
   const model = await getModelOrThrow(session.modelId);
@@ -153,7 +189,11 @@ export async function runChat(session: GenerationSession, user: User, question: 
     },
   });
 
-  await ChatMessage.create({ sessionId: session.id, role: "user", content: question });
+  await ChatMessage.create({
+    sessionId: session.id,
+    role: "user",
+    content: question,
+  });
   const assistant = await ChatMessage.create({
     sessionId: session.id,
     role: "assistant",
@@ -177,7 +217,9 @@ export async function runBrief(
   const tailored = await getTailored(session.id);
   const model = await getModelOrThrow(session.modelId);
   assertModelAllowed(model.tier, plan(user), model.name);
-  const existing = await InterviewBrief.findOne({ where: { sessionId: session.id } });
+  const existing = await InterviewBrief.findOne({
+    where: { sessionId: session.id },
+  });
   if (existing) assertRetryAvailable(session.retries.brief, plan(user));
 
   const out = await chargeAndRun({
@@ -200,7 +242,12 @@ export async function runBrief(
     },
   });
 
-  const fields = { content: out.result, type: opts.type, tone: opts.tone, format: opts.format };
+  const fields = {
+    content: out.result,
+    type: opts.type,
+    tone: opts.tone,
+    format: opts.format,
+  };
   if (existing) {
     Object.assign(existing, fields);
     await existing.save();

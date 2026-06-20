@@ -28,7 +28,11 @@ export class UsageEvent extends Model<
 
 UsageEvent.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     sessionId: { type: DataTypes.UUID, allowNull: true },
     action: {
@@ -37,9 +41,21 @@ UsageEvent.init(
     },
     modelId: { type: DataTypes.STRING, allowNull: false },
     inputTokens: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    outputTokens: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    rawCostUsd: { type: DataTypes.DECIMAL(10, 6), allowNull: false, defaultValue: 0 },
-    creditsCharged: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    outputTokens: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    rawCostUsd: {
+      type: DataTypes.DECIMAL(10, 6),
+      allowNull: false,
+      defaultValue: 0,
+    },
+    creditsCharged: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },
@@ -47,6 +63,9 @@ UsageEvent.init(
     sequelize,
     modelName: "UsageEvent",
     tableName: "usage_events",
-    indexes: [{ fields: ["user_id", "created_at"] }, { fields: ["session_id"] }],
+    indexes: [
+      { fields: ["user_id", "created_at"] },
+      { fields: ["session_id"] },
+    ],
   },
 );

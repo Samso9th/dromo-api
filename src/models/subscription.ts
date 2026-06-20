@@ -27,7 +27,11 @@ export class Subscription extends Model<
 
 Subscription.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     plan: { type: DataTypes.ENUM("pro", "premium"), allowNull: false },
     status: {
@@ -38,7 +42,11 @@ Subscription.init(
     providerSubscriptionId: { type: DataTypes.STRING, allowNull: false },
     currentPeriodStart: { type: DataTypes.DATE, allowNull: true },
     currentPeriodEnd: { type: DataTypes.DATE, allowNull: true },
-    cancelAtPeriodEnd: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    cancelAtPeriodEnd: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },

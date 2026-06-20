@@ -23,7 +23,11 @@ export class MasterResume extends Model<
 
 MasterResume.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false, unique: true },
     data: { type: DataTypes.JSONB, allowNull: false },
     sourceFileUrl: { type: DataTypes.STRING, allowNull: true },

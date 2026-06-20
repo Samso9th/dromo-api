@@ -8,7 +8,9 @@ if (cloudinaryEnabled) {
   cloudinary.config(); // reads CLOUDINARY_URL from the environment
   logger.debug("Cloudinary configured");
 } else {
-  logger.warn("CLOUDINARY_URL not set — resume files will be parsed but not stored");
+  logger.warn(
+    "CLOUDINARY_URL not set — resume files will be parsed but not stored",
+  );
 }
 
 export { cloudinary };

@@ -27,7 +27,11 @@ export class TailoredResume extends Model<
 }
 TailoredResume.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     sessionId: { type: DataTypes.UUID, allowNull: false, unique: true },
     data: { type: DataTypes.JSONB, allowNull: false },
     createdAt: DataTypes.DATE,
@@ -53,7 +57,11 @@ export class CoverLetter extends Model<
 }
 CoverLetter.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     sessionId: { type: DataTypes.UUID, allowNull: false, unique: true },
     greeting: { type: DataTypes.TEXT, allowNull: false },
     body: { type: DataTypes.TEXT, allowNull: false },
@@ -81,7 +89,11 @@ export class ChatMessage extends Model<
 }
 ChatMessage.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     sessionId: { type: DataTypes.UUID, allowNull: false },
     role: { type: DataTypes.ENUM("user", "assistant"), allowNull: false },
     content: { type: DataTypes.TEXT, allowNull: false },
@@ -113,18 +125,31 @@ export class InterviewBrief extends Model<
 }
 InterviewBrief.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     sessionId: { type: DataTypes.UUID, allowNull: false, unique: true },
     content: { type: DataTypes.TEXT, allowNull: false },
     type: {
-      type: DataTypes.ENUM("recruiter-screen", "behavioral", "technical", "system-design", "mixed"),
+      type: DataTypes.ENUM(
+        "recruiter-screen",
+        "behavioral",
+        "technical",
+        "system-design",
+        "mixed",
+      ),
       allowNull: false,
     },
     tone: {
       type: DataTypes.ENUM("professional", "conversational", "creative"),
       allowNull: false,
     },
-    format: { type: DataTypes.ENUM("md", "docx", "pdf", "txt"), allowNull: false },
+    format: {
+      type: DataTypes.ENUM("md", "docx", "pdf", "txt"),
+      allowNull: false,
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },

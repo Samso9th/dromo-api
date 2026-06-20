@@ -89,10 +89,18 @@ export const tailor = asyncHandler(async (req, res) => {
   res.json(await gen.runTailor(await owned(req), reqUser(req)));
 });
 export const cover = asyncHandler(async (req, res) => {
-  res.json(await gen.runCover(await owned(req), reqUser(req), req.body.tone || "professional"));
+  res.json(
+    await gen.runCover(
+      await owned(req),
+      reqUser(req),
+      req.body.tone || "professional",
+    ),
+  );
 });
 export const chat = asyncHandler(async (req, res) => {
-  res.json(await gen.runChat(await owned(req), reqUser(req), req.body.question));
+  res.json(
+    await gen.runChat(await owned(req), reqUser(req), req.body.question),
+  );
 });
 export const brief = asyncHandler(async (req, res) => {
   res.json(await gen.runBrief(await owned(req), reqUser(req), req.body));

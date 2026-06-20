@@ -7,7 +7,11 @@ export type ModelTier = "economy" | "standard" | "premium";
 export const MODEL_TIERS: ModelTier[] = ["economy", "standard", "premium"];
 
 export type OAuthProvider = "google" | "github" | "linkedin";
-export const OAUTH_PROVIDERS: OAuthProvider[] = ["google", "github", "linkedin"];
+export const OAUTH_PROVIDERS: OAuthProvider[] = [
+  "google",
+  "github",
+  "linkedin",
+];
 
 export type SessionStatus = "active" | "archived";
 export type ChatRole = "user" | "assistant";
@@ -22,8 +26,18 @@ export type InterviewType =
 export type InterviewTone = "professional" | "conversational" | "creative";
 export type DocFormat = "md" | "docx" | "pdf" | "txt";
 
-export type CreditTxnKind = "grant" | "spend" | "topup" | "refund" | "adjustment";
-export type CreditTxnRef = "usage" | "payment" | "subscription" | "signup" | "manual";
+export type CreditTxnKind =
+  | "grant"
+  | "spend"
+  | "topup"
+  | "refund"
+  | "adjustment";
+export type CreditTxnRef =
+  | "usage"
+  | "payment"
+  | "subscription"
+  | "signup"
+  | "manual";
 export type PaymentProvider = "stripe" | "dubu";
 export type PaymentKind = "subscription" | "topup";
 export type PaymentStatus = "pending" | "succeeded" | "failed" | "refunded";
@@ -86,7 +100,10 @@ export interface MasterResumeData {
   extracurriculars: ExtracurricularEntry[];
   education: EducationEntry[];
   certifications: CertificationEntry[];
-  extraSections?: Array<{ title: string; items: Array<Record<string, unknown>> }>;
+  extraSections?: Array<{
+    title: string;
+    items: Array<Record<string, unknown>>;
+  }>;
 }
 export interface TailoredResumeData extends MasterResumeData {
   matchedSkills: string[];

@@ -22,7 +22,9 @@ async function main() {
   // Refresh model pricing from OpenRouter in the background (non-blocking).
   // A scheduled job will own this later; this keeps prices fresh on boot.
   void import("@/services/pricing").then(({ refreshPricing }) =>
-    refreshPricing().catch((err) => logger.warn(`Pricing refresh failed: ${(err as Error).message}`)),
+    refreshPricing().catch((err) =>
+      logger.warn(`Pricing refresh failed: ${(err as Error).message}`),
+    ),
   );
 }
 

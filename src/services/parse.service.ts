@@ -26,7 +26,8 @@ async function extractText(file: UploadedFile): Promise<string> {
     file.mimetype.includes("officedocument") ||
     name.endsWith(".docx");
   if (isPdf) return (await pdfParse(file.buffer)).text;
-  if (isDocx) return (await mammoth.extractRawText({ buffer: file.buffer })).value;
+  if (isDocx)
+    return (await mammoth.extractRawText({ buffer: file.buffer })).value;
   throw badRequest("Please upload a PDF or DOCX file");
 }
 
@@ -61,10 +62,15 @@ async function uploadFile(file: UploadedFile): Promise<string | null> {
 }
 
 /** Upload a resume file → extract text → AI-parse to master JSON (charged) → persist. */
-export async function uploadAndParseMaster(user: User, file: UploadedFile): Promise<MasterResumeData> {
+export async function uploadAndParseMaster(
+  user: User,
+  file: UploadedFile,
+): Promise<MasterResumeData> {
   const text = await extractText(file);
   if (text.trim().length < 40) {
-    throw badRequest("Couldn't read enough text from that file. Is it a text-based PDF?");
+    throw badRequest(
+      "Couldn't read enough text from that file. Is it a text-based PDF?",
+    );
   }
 
   const model = await getModelOrThrow(DEFAULT_MODEL_ID);
@@ -78,12 +84,20 @@ export async function uploadAndParseMaster(user: User, file: UploadedFile): Prom
         model: model.id,
         messages: [
           { role: "system", content: PARSE_SYS },
-          { role: "user", content: `RESUME TEXT:\n${text.slice(0, 40000)}\n\nReturn the COMPLETE structured JSON — include every section, especially education and certifications.` },
+          {
+            role: "user",
+            content: `RESUME TEXT:\n${text.slice(0, 40000)}\n\nReturn the COMPLETE structured JSON — include every section, especially education and certifications.`,
+          },
         ],
         json: true,
         maxTokens: 8000,
       });
-      return { result: masterResumeSchema.parse(parseJson(content)) as MasterResumeData, usage };
+      return {
+        result: masterResumeSchema.parse(
+          parseJson(content),
+        ) as MasterResumeData,
+        usage,
+      };
     },
   });
 

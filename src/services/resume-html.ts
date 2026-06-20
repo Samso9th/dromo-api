@@ -1,5 +1,9 @@
 import type { MasterResumeData, TailoredResumeData } from "@/types";
-import { getTemplateConfig, type SectionKey, type TemplateConfig } from "@/constants/templates";
+import {
+  getTemplateConfig,
+  type SectionKey,
+  type TemplateConfig,
+} from "@/constants/templates";
 
 type ResumeData = MasterResumeData | TailoredResumeData;
 
@@ -51,10 +55,15 @@ function entry(opts: {
 }): string {
   const leftHtml =
     `<strong>${esc(opts.left)}</strong>` +
-    (opts.leftSub ? `<span style="margin-left:8px;text-decoration:underline;font-size:12px;">${esc(opts.leftSub)}</span>` : "");
+    (opts.leftSub
+      ? `<span style="margin-left:8px;text-decoration:underline;font-size:12px;">${esc(opts.leftSub)}</span>`
+      : "");
   const sub =
     opts.role || opts.location
-      ? row(opts.role ? `<em>${esc(opts.role)}</em>` : "", opts.location ? `<em>${esc(opts.location)}</em>` : "")
+      ? row(
+          opts.role ? `<em>${esc(opts.role)}</em>` : "",
+          opts.location ? `<em>${esc(opts.location)}</em>` : "",
+        )
       : "";
   return `<div style="margin-bottom:10px;">${row(leftHtml, `<strong>${esc(opts.right)}</strong>`)}${sub}${bullets(opts.bl)}</div>`;
 }
@@ -152,10 +161,14 @@ export function resumeHtml(data: ResumeData, templateId: string): string {
     cfg.font === "serif"
       ? 'Georgia, "Times New Roman", serif'
       : "Helvetica, Arial, sans-serif";
-  const base = cfg.density === "compact" ? 12 : cfg.density === "airy" ? 13.5 : 13;
-  const lh = cfg.density === "compact" ? 1.32 : cfg.density === "airy" ? 1.6 : 1.45;
+  const base =
+    cfg.density === "compact" ? 12 : cfg.density === "airy" ? 13.5 : 13;
+  const lh =
+    cfg.density === "compact" ? 1.32 : cfg.density === "airy" ? 1.6 : 1.45;
   const h = data.header;
-  const contact = [h.email, h.phone, h.github, h.linkedin, h.website].filter(Boolean) as string[];
+  const contact = [h.email, h.phone, h.github, h.linkedin, h.website].filter(
+    Boolean,
+  ) as string[];
 
   const header = `<header style="text-align:${cfg.nameAlign};margin-bottom:${cfg.density === "airy" ? 24 : 16}px;">
     <h1 style="margin:0;font-size:${cfg.nameSize}px;font-weight:700;letter-spacing:${cfg.nameUppercase ? ".08em" : "-.01em"};text-transform:${cfg.nameUppercase ? "uppercase" : "none"};">${esc(h.name)}</h1>
@@ -175,7 +188,12 @@ export function resumeHtml(data: ResumeData, templateId: string): string {
     bodyHtml = ORDER.map((k) => section(k, data, cfg)).join("");
   }
 
-  const pad = cfg.density === "compact" ? "40px 48px" : cfg.density === "airy" ? "60px 64px" : "48px 56px";
+  const pad =
+    cfg.density === "compact"
+      ? "40px 48px"
+      : cfg.density === "airy"
+        ? "60px 64px"
+        : "48px 56px";
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     *{box-sizing:border-box;} body{margin:0;}
     @page{size:A4;margin:0;}
@@ -185,10 +203,17 @@ export function resumeHtml(data: ResumeData, templateId: string): string {
 }
 
 /** Minimal cover-letter HTML (matches the resume's professional serif). */
-export function coverHtml(cl: { greeting: string; body: string; closing: string; signature: string }): string {
+export function coverHtml(cl: {
+  greeting: string;
+  body: string;
+  closing: string;
+  signature: string;
+}): string {
   const paras = cl.body
     .split(/\n{2,}/)
-    .map((p) => `<p style="margin:0 0 12px;">${esc(p).replace(/\n/g, "<br>")}</p>`)
+    .map(
+      (p) => `<p style="margin:0 0 12px;">${esc(p).replace(/\n/g, "<br>")}</p>`,
+    )
     .join("");
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
     @page{size:A4;margin:0;} body{margin:0;}

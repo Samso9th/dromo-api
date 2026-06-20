@@ -9,7 +9,9 @@ export const logger = winston.createLogger({
         winston.format.colorize(),
         winston.format.timestamp({ format: "HH:mm:ss" }),
         winston.format.printf(({ level, message, timestamp, ...meta }) => {
-          const rest = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : "";
+          const rest = Object.keys(meta).length
+            ? ` ${JSON.stringify(meta)}`
+            : "";
           return `${timestamp} ${level} ${message}${rest}`;
         }),
       ),

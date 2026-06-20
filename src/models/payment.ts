@@ -8,7 +8,10 @@ import {
 import { sequelize } from "@/config/database";
 import type { PaymentKind, PaymentProvider, PaymentStatus } from "@/types";
 
-export class Payment extends Model<InferAttributes<Payment>, InferCreationAttributes<Payment>> {
+export class Payment extends Model<
+  InferAttributes<Payment>,
+  InferCreationAttributes<Payment>
+> {
   declare id: CreationOptional<string>;
   declare userId: string;
   declare provider: PaymentProvider;
@@ -24,13 +27,21 @@ export class Payment extends Model<InferAttributes<Payment>, InferCreationAttrib
 
 Payment.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     provider: { type: DataTypes.ENUM("stripe", "dubu"), allowNull: false },
     providerRef: { type: DataTypes.STRING, allowNull: false },
     kind: { type: DataTypes.ENUM("subscription", "topup"), allowNull: false },
     amountUsd: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
-    creditsGranted: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+    creditsGranted: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     status: {
       type: DataTypes.ENUM("pending", "succeeded", "failed", "refunded"),
       allowNull: false,
@@ -44,6 +55,9 @@ Payment.init(
     sequelize,
     modelName: "Payment",
     tableName: "payments",
-    indexes: [{ unique: true, fields: ["provider", "provider_ref"] }, { fields: ["user_id"] }],
+    indexes: [
+      { unique: true, fields: ["provider", "provider_ref"] },
+      { fields: ["user_id"] },
+    ],
   },
 );

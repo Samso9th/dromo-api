@@ -5,7 +5,9 @@ import { z } from "zod";
 
 const str = z.string().default("");
 const optStr = z.string().optional();
-const period = z.object({ start: str, end: str }).default({ start: "", end: "" });
+const period = z
+  .object({ start: str, end: str })
+  .default({ start: "", end: "" });
 
 const header = z.object({
   name: str,
@@ -67,7 +69,9 @@ export const masterResumeSchema = z.object({
   education: z.array(education).default([]),
   certifications: z.array(certification).default([]),
   extraSections: z
-    .array(z.object({ title: z.string(), items: z.array(z.record(z.unknown())) }))
+    .array(
+      z.object({ title: z.string(), items: z.array(z.record(z.unknown())) }),
+    )
     .optional(),
 });
 

@@ -8,7 +8,10 @@ import {
 import { sequelize } from "@/config/database";
 import { PLANS, type Plan } from "@/types";
 
-export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
+> {
   declare id: CreationOptional<string>;
   declare name: string;
   declare email: string;
@@ -24,12 +27,24 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
 
 User.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     name: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false, unique: true },
     passwordHash: { type: DataTypes.STRING, allowNull: true },
-    emailVerified: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    plan: { type: DataTypes.ENUM(...PLANS), allowNull: false, defaultValue: "free" },
+    emailVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    plan: {
+      type: DataTypes.ENUM(...PLANS),
+      allowNull: false,
+      defaultValue: "free",
+    },
     credits: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     avatarUrl: { type: DataTypes.STRING, allowNull: true },
     stripeCustomerId: { type: DataTypes.STRING, allowNull: true },

@@ -11,7 +11,10 @@ import { uploadAndParseMaster } from "@/services/parse.service";
 export const resumeRouter = Router();
 resumeRouter.use(requireAuth);
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
+});
 
 // POST /resume/master → upload a PDF/DOCX, AI-parse it into the master resume JSON
 resumeRouter.post(
@@ -32,7 +35,9 @@ resumeRouter.post(
 resumeRouter.get(
   "/master",
   asyncHandler(async (req, res) => {
-    const master = await MasterResume.findOne({ where: { userId: reqUser(req).id } });
+    const master = await MasterResume.findOne({
+      where: { userId: reqUser(req).id },
+    });
     res.json(master?.data ?? null);
   }),
 );
@@ -49,7 +54,11 @@ resumeRouter.put(
       existing.parsedAt = existing.parsedAt ?? new Date();
       await existing.save();
     } else {
-      await MasterResume.create({ userId, data: req.body, parsedAt: new Date() });
+      await MasterResume.create({
+        userId,
+        data: req.body,
+        parsedAt: new Date(),
+      });
     }
     res.json(req.body);
   }),

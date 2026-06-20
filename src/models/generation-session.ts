@@ -28,15 +28,27 @@ export class GenerationSession extends Model<
 
 GenerationSession.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     company: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.STRING, allowNull: false },
     jobUrl: { type: DataTypes.STRING, allowNull: true },
     jobDescription: { type: DataTypes.TEXT, allowNull: false },
     modelId: { type: DataTypes.STRING, allowNull: false },
-    templateId: { type: DataTypes.STRING, allowNull: false, defaultValue: "classic" },
-    status: { type: DataTypes.ENUM("active", "archived"), allowNull: false, defaultValue: "active" },
+    templateId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "classic",
+    },
+    status: {
+      type: DataTypes.ENUM("active", "archived"),
+      allowNull: false,
+      defaultValue: "active",
+    },
     retries: {
       type: DataTypes.JSONB,
       allowNull: false,
@@ -49,6 +61,9 @@ GenerationSession.init(
     sequelize,
     modelName: "GenerationSession",
     tableName: "generation_sessions",
-    indexes: [{ fields: ["user_id", "status"] }, { fields: ["user_id", "created_at"] }],
+    indexes: [
+      { fields: ["user_id", "status"] },
+      { fields: ["user_id", "created_at"] },
+    ],
   },
 );

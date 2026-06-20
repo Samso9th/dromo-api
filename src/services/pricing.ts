@@ -22,12 +22,17 @@ export async function refreshPricing(): Promise<number> {
     await row.save();
     updated++;
   }
-  logger.info(`Model pricing refreshed: ${updated}/${ours.length} models from OpenRouter`);
+  logger.info(
+    `Model pricing refreshed: ${updated}/${ours.length} models from OpenRouter`,
+  );
   return updated;
 }
 
 export async function listEnabledModels(): Promise<ModelPricing[]> {
-  return ModelPricing.findAll({ where: { enabled: true }, order: [["outputPrice", "ASC"]] });
+  return ModelPricing.findAll({
+    where: { enabled: true },
+    order: [["outputPrice", "ASC"]],
+  });
 }
 
 export async function getModelOrThrow(id: string): Promise<ModelPricing> {
@@ -38,7 +43,8 @@ export async function getModelOrThrow(id: string): Promise<ModelPricing> {
 
 /** Serialize to the frontend AiModel shape (pricing in $ per MILLION tokens). */
 export function serializeModel(m: ModelPricing) {
-  const perMillion = (v: number | string) => Number((Number(v) * 1_000_000).toFixed(6));
+  const perMillion = (v: number | string) =>
+    Number((Number(v) * 1_000_000).toFixed(6));
   return {
     id: m.id,
     name: m.name,

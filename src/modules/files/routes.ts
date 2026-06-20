@@ -28,7 +28,10 @@ filesRouter.get(
 
     const file = await buildFile(session, kind, format);
     res.setHeader("Content-Type", file.contentType);
-    res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${file.filename}"`,
+    );
     res.send(file.buffer);
   }),
 );

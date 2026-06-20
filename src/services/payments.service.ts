@@ -48,7 +48,10 @@ export async function grantForPayment(input: {
           amountUsd: input.amountUsd,
           creditsGranted: input.credits,
           status: "succeeded",
-          metadata: { planId: input.planId ?? null, subscriptionId: input.subscriptionId ?? null },
+          metadata: {
+            planId: input.planId ?? null,
+            subscriptionId: input.subscriptionId ?? null,
+          },
         },
         { transaction: t },
       );
@@ -68,7 +71,10 @@ export async function grantForPayment(input: {
       t,
     );
 
-    if (input.kind === "subscription" && (input.planId === "pro" || input.planId === "premium")) {
+    if (
+      input.kind === "subscription" &&
+      (input.planId === "pro" || input.planId === "premium")
+    ) {
       const user = await User.findByPk(input.userId, { transaction: t });
       if (user) {
         user.plan = input.planId;
@@ -76,7 +82,10 @@ export async function grantForPayment(input: {
       }
       if (input.subscriptionId) {
         const [sub] = await Subscription.findOrCreate({
-          where: { provider: input.provider, providerSubscriptionId: input.subscriptionId },
+          where: {
+            provider: input.provider,
+            providerSubscriptionId: input.subscriptionId,
+          },
           defaults: {
             userId: input.userId,
             plan: input.planId,
@@ -92,7 +101,9 @@ export async function grantForPayment(input: {
       }
     }
   });
-  logger.info(`Payment granted: ${input.credits} cr → user ${input.userId} (${input.provider} ${input.kind})`);
+  logger.info(
+    `Payment granted: ${input.credits} cr → user ${input.userId} (${input.provider} ${input.kind})`,
+  );
 }
 
 /** Cancel/downgrade — keep leftover credits (per product decision). */
@@ -111,12 +122,22 @@ export async function downgradeSubscription(
     user.plan = "free";
     await user.save();
   }
-  logger.info(`Subscription ${providerSubscriptionId} canceled → user ${sub.userId} downgraded`);
+  logger.info(
+    `Subscription ${providerSubscriptionId} canceled → user ${sub.userId} downgraded`,
+  );
 }
 
 /* ── Stripe ── */
-export async function createStripeCheckout(user: User, input: CheckoutInput): Promise<string> {
-  if (!stripe) throw new AppError(503, "stripe_unavailable", "Card payments aren't configured yet");
+export async function createStripeCheckout(
+  user: User,
+  input: CheckoutInput,
+): Promise<string> {
+  if (!stripe)
+    throw new AppError(
+      503,
+      "stripe_unavailable",
+      "Card payments aren't configured yet",
+    );
   const { amountUsd, credits, label } = resolveCheckout(input);
   const mode = input.kind === "subscription" ? "subscription" : "payment";
   const metadata = {
@@ -133,7 +154,9 @@ export async function createStripeCheckout(user: User, input: CheckoutInput): Pr
         price_data: {
           currency: "usd",
           unit_amount: Math.round(amountUsd * 100),
-          ...(mode === "subscription" ? { recurring: { interval: "month" as const } } : {}),
+          ...(mode === "subscription"
+            ? { recurring: { interval: "month" as const } }
+            : {}),
           product_data: { name: label },
         },
         quantity: 1,
@@ -144,7 +167,12 @@ export async function createStripeCheckout(user: User, input: CheckoutInput): Pr
     metadata,
     ...(mode === "subscription" ? { subscription_data: { metadata } } : {}),
   });
-  if (!session.url) throw new AppError(502, "stripe_error", "Stripe did not return a checkout URL");
+  if (!session.url)
+    throw new AppError(
+      502,
+      "stripe_error",
+      "Stripe did not return a checkout URL",
+    );
   return session.url;
 }
 
@@ -162,14 +190,18 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<void> {
         planId: (md.planId || undefined) as Plan | undefined,
         credits: Number(md.credits ?? 0),
         amountUsd: (s.amount_total ?? 0) / 100,
-        subscriptionId: typeof s.subscription === "string" ? s.subscription : null,
+        subscriptionId:
+          typeof s.subscription === "string" ? s.subscription : null,
       });
       break;
     }
     case "invoice.paid": {
       const inv = event.data.object as Stripe.Invoice;
       if (inv.billing_reason !== "subscription_cycle") return; // first invoice handled at checkout
-      const md = (inv.subscription_details?.metadata ?? {}) as Record<string, string>;
+      const md = (inv.subscription_details?.metadata ?? {}) as Record<
+        string,
+        string
+      >;
       if (!md.userId) return;
       await grantForPayment({
         userId: md.userId,
@@ -179,7 +211,8 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<void> {
         planId: md.planId as Plan,
         credits: Number(md.credits ?? 0),
         amountUsd: (inv.amount_paid ?? 0) / 100,
-        subscriptionId: typeof inv.subscription === "string" ? inv.subscription : null,
+        subscriptionId:
+          typeof inv.subscription === "string" ? inv.subscription : null,
       });
       break;
     }
@@ -194,34 +227,58 @@ export async function handleStripeEvent(event: Stripe.Event): Promise<void> {
 }
 
 /* ── Dubu Pay (Business API: POST /checkout-links, X-Api-Key auth) ── */
-export async function createDubuCheckout(user: User, input: CheckoutInput): Promise<string> {
+export async function createDubuCheckout(
+  user: User,
+  input: CheckoutInput,
+): Promise<string> {
   if (!env.DUBU_API_BASE || !env.DUBU_API_KEY) {
-    throw new AppError(503, "dubu_unavailable", "Dubu Pay isn't configured yet");
+    throw new AppError(
+      503,
+      "dubu_unavailable",
+      "Dubu Pay isn't configured yet",
+    );
   }
   const { amountUsd, credits, label } = resolveCheckout(input);
   const res = await fetch(`${env.DUBU_API_BASE}/checkout-links`, {
     method: "POST",
-    headers: { "X-Api-Key": env.DUBU_API_KEY, "Content-Type": "application/json" },
+    headers: {
+      "X-Api-Key": env.DUBU_API_KEY,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       title: label,
       type: "one_time",
       currency: "USD",
       amount: amountUsd,
       redirect_url: `${env.APP_URL}/billing?status=success`,
-      success_message: "Payment received — credits added to your Dromo account.",
+      success_message:
+        "Payment received — credits added to your Dromo account.",
     }),
   });
   if (!res.ok) {
-    throw new AppError(502, "dubu_error", `Dubu checkout failed: ${res.status} ${await res.text()}`);
+    throw new AppError(
+      502,
+      "dubu_error",
+      `Dubu checkout failed: ${res.status} ${await res.text()}`,
+    );
   }
-  const body = (await res.json()) as { data?: Record<string, unknown> } & Record<string, unknown>;
+  const body = (await res.json()) as {
+    data?: Record<string, unknown>;
+  } & Record<string, unknown>;
   const link = (body.data ?? body) as Record<string, unknown>;
   const ref = String(link.id ?? link.slug ?? "");
   const url =
     (link.url as string) ??
     (link.checkout_url as string) ??
-    (link.slug && env.DUBU_CHECKOUT_URL ? `${env.DUBU_CHECKOUT_URL}/${link.slug}` : "");
-  if (!ref || !url) throw new AppError(502, "dubu_error", "Dubu did not return a usable checkout link");
+    (link.slug && env.DUBU_CHECKOUT_URL
+      ? `${env.DUBU_CHECKOUT_URL}/${link.slug}`
+      : "");
+  if (!ref || !url)
+    throw new AppError(
+      502,
+      "dubu_error",
+      "Dubu did not return a usable checkout link",
+    );
 
   // Pending payment so the webhook can reconcile + grant.
   await Payment.create({
@@ -237,15 +294,23 @@ export async function createDubuCheckout(user: User, input: CheckoutInput): Prom
   return url;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function handleDubuEvent(payload: any): Promise<void> {
   const data = payload?.data ?? payload ?? {};
   const status = String(payload?.event ?? payload?.type ?? data?.status ?? "");
-  const ref = String(data?.checkout_link_id ?? data?.checkoutLinkId ?? data?.reference ?? data?.id ?? "");
+  const ref = String(
+    data?.checkout_link_id ??
+      data?.checkoutLinkId ??
+      data?.reference ??
+      data?.id ??
+      "",
+  );
   if (!/paid|success|complete/i.test(status) || !ref) return;
-  const payment = await Payment.findOne({ where: { provider: "dubu", providerRef: ref } });
+  const payment = await Payment.findOne({
+    where: { provider: "dubu", providerRef: ref },
+  });
   if (!payment || payment.status === "succeeded") return;
-  const planId = (payment.metadata as { planId?: Plan } | null)?.planId ?? undefined;
+  const planId =
+    (payment.metadata as { planId?: Plan } | null)?.planId ?? undefined;
   await grantForPayment({
     userId: payment.userId,
     provider: "dubu",

@@ -43,7 +43,12 @@ export function serializeSession(s: GenerationSession, a: Bundle) {
       createdAt: m.createdAt,
     })),
     interviewBrief: a.brief
-      ? { content: a.brief.content, type: a.brief.type, tone: a.brief.tone, format: a.brief.format }
+      ? {
+          content: a.brief.content,
+          type: a.brief.type,
+          tone: a.brief.tone,
+          format: a.brief.format,
+        }
       : undefined,
   };
 }
@@ -52,7 +57,10 @@ export async function loadSessionDetail(s: GenerationSession) {
   const [tailored, cover, chat, brief] = await Promise.all([
     TailoredResume.findOne({ where: { sessionId: s.id } }),
     CoverLetter.findOne({ where: { sessionId: s.id } }),
-    ChatMessage.findAll({ where: { sessionId: s.id }, order: [["createdAt", "ASC"]] }),
+    ChatMessage.findAll({
+      where: { sessionId: s.id },
+      order: [["createdAt", "ASC"]],
+    }),
     InterviewBrief.findOne({ where: { sessionId: s.id } }),
   ]);
   return serializeSession(s, { tailored, cover, chat, brief });

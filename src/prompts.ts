@@ -18,7 +18,10 @@ Rules:
     "removedSkills": string[]  — master skills you dropped as irrelevant
 - Do not wrap the JSON in markdown fences. Output JSON only.`;
 
-export function tailorMessages(master: MasterResumeData, jobDescription: string): ChatMessage[] {
+export function tailorMessages(
+  master: MasterResumeData,
+  jobDescription: string,
+): ChatMessage[] {
   return [
     { role: "system", content: TAILOR_SYS },
     {
@@ -58,7 +61,9 @@ export function qaMessages(
       role: "system",
       content: `You answer job-application questions AS the candidate, grounded ONLY in their tailored resume and this job description. Be specific, first-person, concise (3-5 sentences for application boxes), and tie answers to concrete outcomes. Never fabricate facts not supported by the resume.\n\nTAILORED RESUME (JSON):\n${JSON.stringify(tailored)}\n\nJOB DESCRIPTION:\n${jobDescription}`,
     },
-    ...history.map((m) => ({ role: m.role, content: m.content }) as ChatMessage),
+    ...history.map(
+      (m) => ({ role: m.role, content: m.content }) as ChatMessage,
+    ),
     { role: "user", content: question },
   ];
 }

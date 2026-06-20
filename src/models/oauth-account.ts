@@ -24,7 +24,11 @@ export class OAuthAccount extends Model<
 
 OAuthAccount.init(
   {
-    id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: { type: DataTypes.UUID, allowNull: false },
     provider: { type: DataTypes.ENUM(...OAUTH_PROVIDERS), allowNull: false },
     providerAccountId: { type: DataTypes.STRING, allowNull: false },
