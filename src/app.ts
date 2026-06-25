@@ -13,9 +13,25 @@ export function createApp() {
   app.set("trust proxy", 1); // correct req.ip behind a proxy
 
   app.use(helmet());
+  // Allow the configured SPA origin plus dromo.tech and any of its subdomains.
+  // A function origin is required because cookies forbid "*"; we still echo back
+  // a single specific origin per request.
+  const isAllowedOrigin = (origin: string): boolean => {
+    if (origin === env.APP_URL) return true;
+    try {
+      const { hostname } = new URL(origin);
+      return hostname === "dromo.tech" || hostname.endsWith(".dromo.tech");
+    } catch {
+      return false;
+    }
+  };
   app.use(
     cors({
-      origin: env.APP_URL, // SPA origin; cookies require a specific origin (not "*")
+      origin: (origin, callback) => {
+        // Non-browser requests (curl, server-to-server) have no Origin header.
+        if (!origin || isAllowedOrigin(origin)) return callback(null, true);
+        return callback(new Error(`Origin not allowed by CORS: ${origin}`));
+      },
       credentials: true,
     }),
   );
