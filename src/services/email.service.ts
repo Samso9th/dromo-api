@@ -1,7 +1,7 @@
 import { env } from "@/config/env";
 import { logger } from "@/config/logger";
 
-const FROM = "Dromo <noreply@dromo.app>";
+const FROM = "Dromo Tech <noreply@dromo.tech>";
 
 async function sendEmail(
   to: string,
